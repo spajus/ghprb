@@ -103,16 +103,19 @@ public class GhprbBuild {
 
 	protected void onFinished() {
 		GHCommitState state;
+		String publishedURL = GhprbTrigger.DESCRIPTOR.getPublishedURL();
 		if (build.getResult() == Result.SUCCESS) {
 			state = GHCommitState.SUCCESS;
+			repo.addComment(pull, "Jenkins build passed: " + publishedURL + build.getUrl());
 		} else {
 			state = GHCommitState.FAILURE;
+			repo.addComment(pull, "Jenkins build failed: " + publishedURL + build.getUrl());
 		}
-		repo.createCommitStatus(build, state, (merge ? "Merged build finished." : "Build finished."),pull );
+		repo.createCommitStatus(build, state, (merge ? "Merged build finished." : "Build finished."), pull);
 
-		String publishedURL = GhprbTrigger.DESCRIPTOR.getPublishedURL();
-		if (publishedURL != null && !publishedURL.isEmpty()) {
-			repo.addComment(pull, "Build results will soon be (or already are) available at: " + publishedURL + build.getUrl());
-		}
+		
+		//if (publishedURL != null && !publishedURL.isEmpty()) {
+			//repo.addComment(pull, "Build results will soon be (or already are) available at: " + publishedURL + build.getUrl());
+		//}
 	}
 }
